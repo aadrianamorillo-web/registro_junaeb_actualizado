@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Asiste · Lista de asistencia</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+<header class="encabezado">
+  <a class="marca" href="{{ url_for('inicio') }}"><span class="marca-icono">A</span><span>Asiste</span></a>
+  <span class="etiqueta">CONTROL DE ASISTENCIA</span>
+</header>
+<main class="contenedor">
+  <section class="intro">
+    <p class="sobretitulo">GESTIÓN DEL CURSO</p>
+    <h1>Lista de asistencia.</h1>
+    <p class="descripcion">Aplicación para registrar y revisar la asistencia del curso.</p>
+  </section>
+
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% if mensajes %}
+      {% for tipo, mensaje in mensajes %}<p class="aviso {{ tipo }}">{{ mensaje }}</p>{% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <section class="resumen">
+    <div><span>Presentes</span><strong>{{ conteo.Presentes }}</strong></div>
+    <div><span>Ausentes</span><strong>{{ conteo.Ausentes }}</strong></div>
+    <div><span>Atrasados</span><strong>{{ conteo.Atrasados }}</strong></div>
+    <div><span>Pendientes</span><strong>{{ conteo.Pendientes }}</strong></div>
+  </section>
+
+  <form class="herramientas" method="get" action="{{ url_for('inicio') }}">
+    <label>Fecha
+      <input type="date" name="fecha" value="{{ fecha }}">
+    </label>
+    <label class="buscador">Buscar estudiante
+      <input type="search" name="buscar" value="{{ buscar }}" placeholder="Escribe un nombre...">
+    </label>
+    <label>Estado
+      <select name="filtro">
+        {% for opcion in ["Todos", "Presente", "Ausente", "Atrasado", "Pendiente"] %}
+        <option value="{{ opcion }}" {% if filtro == opcion %}selected{% endif %}>{{ opcion }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <button class="boton boton-oscuro" type="submit">Aplicar</button>
+  </form>
+
+  <section class="panel">
+    <div class="panel-titulo"><div><h2>Estudiantes</h2><p>{{ estudiantes|length }} estudiantes en esta vista</p></div></div>
+    {% if estudiantes %}
+    <div class="tabla-contenedor">
+      <table>
+        <thead><tr><th>Nombre</th><th>JUNAEB</th><th>Estado de asistencia</th><th>Guardar</th></tr></thead>
+        <tbody>
+        {% for estudiante in estudiantes %}
+          <tr>
+            <td class="nombre">{{ estudiante.nombre }}</td>
+            <td>{% if estudiante.junaeb %}<span class="insignia">Sí</span>{% else %}<span class="texto-suave">No</span>{% endif %}</td>
+            <td>
+              <form class="form-estado" method="post" action="{{ url_for('marcar') }}">
+                <input type="hidden" name="estudiante_id" value="{{ estudiante.id }}">
+                <input type="hidden" name="fecha" value="{{ fecha }}">
+                <input type="hidden" name="buscar" value="{{ buscar }}">
+                <select name="estado" aria-label="Estado de {{ estudiante.nombre }}">
+                  {% for opcion in ["Pendiente", "Presente", "Ausente", "Atrasado"] %}
+                  <option value="{{ opcion }}" {% if estudiante.estado == opcion %}selected{% endif %}>{{ opcion }}</option>
+                  {% endfor %}
+                </select>
+            </td>
+            <td><button class="boton boton-claro" type="submit">Guardar</button></form></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <p class="vacio">No se encontraron estudiantes con esos filtros.</p>
+    {% endif %}
+  </section>
+
+  <details class="agregar">
+    <summary>Agregar estudiante</summary>
+    <form method="post" action="{{ url_for('agregar_estudiante') }}" class="form-agregar">
+      <label>Nombre completo<input name="nombre" required maxlength="180" placeholder="Nombre y apellidos"></label>
+      <label class="check"><input type="checkbox" name="junaeb"> Pertenece a JUNAEB</label>
+      <button class="boton boton-oscuro" type="submit">Agregar estudiante</button>
+    </form>
+  </details>
+  <p class="nota">Los registros se guardan en una base de datos SQLite local, organizados por fecha.</p>
+</main>
+<footer class="pie">Asiste · Control de asistencia</footer>
+<script src="{{ url_for('static', filename='js/asistencia.js') }}"></script>
+</body>
+</html>
