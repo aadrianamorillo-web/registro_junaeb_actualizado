@@ -71,7 +71,7 @@ La aplicación utiliza el puerto definido en la variable de entorno `PORT` y usa
 ## Despliegue en Railway
 
 1. Sube este repositorio a Railway y despliega el servicio desde la raíz del proyecto.
-2. Railway instalará las dependencias de `requirements.txt` y utilizará el comando web definido en `Procfile`.
+2. Railway instalará las dependencias de `requirements.txt` y utilizará el comando de inicio definido en `railway.json` (con `Procfile` como alternativa).
 3. La aplicación escucha en `0.0.0.0` y en el puerto asignado por Railway mediante `PORT`.
 
 La base de datos SQLite se crea localmente en `instancia/asistencia.db`. El almacenamiento local de Railway no es persistente entre despliegues; para conservar los registros, configura un volumen de Railway en la ruta `instancia` o migra a una base de datos administrada.
