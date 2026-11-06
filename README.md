@@ -64,7 +64,17 @@ python app.py
 
 Abrir en el navegador la dirección local que aparece en la terminal, normalmente:
 
-http://127.0.0.1:5000
+http://127.0.0.1:8080
+
+La aplicación utiliza el puerto definido en la variable de entorno `PORT` y usa `8080` como valor predeterminado para desarrollo local.
+
+## Despliegue en Railway
+
+1. Sube este repositorio a Railway y despliega el servicio desde la raíz del proyecto.
+2. Railway instalará las dependencias de `requirements.txt` y utilizará el comando web definido en `Procfile`.
+3. La aplicación escucha en `0.0.0.0` y en el puerto asignado por Railway mediante `PORT`.
+
+La base de datos SQLite se crea localmente en `instancia/asistencia.db`. El almacenamiento local de Railway no es persistente entre despliegues; para conservar los registros, configura un volumen de Railway en la ruta `instancia` o migra a una base de datos administrada.
 
 ## 4. Rutas y funcionalidades
 
